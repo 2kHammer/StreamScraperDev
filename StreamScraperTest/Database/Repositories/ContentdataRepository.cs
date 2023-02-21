@@ -94,7 +94,7 @@ public class ContentdataRepository : IContentdataRepository
     {
         using (StreamScraperContext scc = new StreamScraperContext())
         {
-            return scc.contentinformation.OrderBy(coninf => coninf.DateTimeDataScraped).ToList().GetRange(0, amount);
+            return scc.contentinformation.Where(coninf => coninf.urlPicture != null).OrderBy(coninf => coninf.DateTimeDataScraped).ToList().GetRange(0, amount);
         }
     }
 

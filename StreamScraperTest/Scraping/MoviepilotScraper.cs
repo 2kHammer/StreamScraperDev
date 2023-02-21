@@ -126,7 +126,9 @@ public class MoviepilotScraper : Scraper, IContentdataScraper<Tuple<string, stri
         data.Contentname = doc.QuerySelector(
                 "#header > div.layout--content-width.layout--background > div > div.grid--col-sm-12 > div.meta > h1")
             ?.InnerHtml;
-
+        //Enter vor und nach Name entfernen
+        char[] removeStartEnd = new[] { '\n', ' ' };
+        data.Contentname = data.Contentname?.TrimEnd(removeStartEnd).TrimStart(removeStartEnd);
 
         if (data.Contentname == null)
         {

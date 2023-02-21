@@ -25,6 +25,14 @@ public class ContentlistRepository : IContentlistRepository
         await InsertContents(contentNotInDb);
 
     }
+    
+    public List<Contents> getFullContent()
+    {
+        using (StreamScraperContext scc = new StreamScraperContext())
+        {
+            return scc.content.ToList();
+        }
+    }
 
     public async Task<Contents> getContent(int id)
     {
@@ -42,13 +50,13 @@ public class ContentlistRepository : IContentlistRepository
         }
     }
 
-    public List<Contents> getContentlist(List<int> contentindexes)
+    /*public List<Contents> getContentlist(List<int> contentindexes)
     {
         using (StreamScraperContext scc = new StreamScraperContext())
         {
             return scc.content.Where(con => contentindexes.Contains(con.ContentId)).ToList();
         }
-    }
+    }*/
 
     private List<Contents> CheckIfInTable(List<Tuple<string, string>> actaulContent, List<Contents> contentdb)
     {

@@ -41,10 +41,13 @@ DataBuffer<List<Tuple<string,string>>>.Bufferdata(test3, "Contentnames.dat");*/
  *  - Das Parameter mit den Tupel in Moviepilot Scraper muss eventuell umgeschrieben werden
  *  - Ginny &amp Georgia: amp entfernen
  *  - hoher Ram Verbrauch: bei 80 Prozent aktuell
+ *  - bei manchen Namen steht ein \n danach, Leerzeichen davor und danach entfernen
  * To Do
  *  - Contentdataupdater abschließen
- *      - Problem: bei neues Scrapen der noch nicht gefunden Contentinformation wurden diese neu hinzugefügt (wenn sich etwas geändert hat)
- *      - so wies ausschaut bei denen er was gefunden hat z.B "Bring mich nach Hause","Demon Slayer: Kimetsu no Yaiba - Das Band der Geschwister" wurden die Einträge upgedatet
+ *      - Problem: bei neues Scrapen der noch nicht gefunden Contentinformation wurden diese neu hinzugefügt (wenn sich Typ geändert hat)
+ *      - macht er nicht immer sondern nur machmal
+ *      - bei ändern der Url wurde es nicht neu hinzugefügt, vielleicht wird es nur bei bestimmten Attributen neu hinzugefügt
+ *  - Wert ändern und dann testen, vielleicht findet man den Fehler durch fertig schreiben des Codes (alte Contentinformations updaten)
  *  - Contentlistupdater mit try catch schließen
  *  - passende Zeitpunkte per Cronjob festlegen
  *  - Containerizen und erster test
