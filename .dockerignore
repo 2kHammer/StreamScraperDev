@@ -1,0 +1,23 @@
+# .dockerignore file for a .NET Core application
+
+# Ignore bin and obj directories
+**/bin
+**/obj
+
+# Ignore Visual Studio files
+**/*.csproj.user
+**/*.vs
+
+# Ignore any test projects
+**/*Tests.csproj
+
+# Ignore .NET Core runtime files
+**/runtimeconfig.json
+**/project.assets.json
+**/*.dll
+**/*.pdb
+**/*.runtimeconfig.dev.json
+
+# Ignore any files or directories that are not needed for the app to run
+.idea/
+.git/

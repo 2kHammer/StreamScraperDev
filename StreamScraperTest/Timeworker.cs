@@ -27,8 +27,12 @@ public sealed class Timeworker : BackgroundService
     public Timeworker(ILogger<Timeworker> logger, IStreamingcontentScraper<Tuple<string, string>> streamingcontentscraper, IContentdataScraper<Tuple<string, string>> contentdatascraper)
     {
         _logger = logger;
-        cronjob1 = "36,43,46,49 * * * *";
-        cronjob2 = "41,45,56 * * * *";
+        cronjob2 = "30 * * * *";
+        cronjob1 = "5,35,58 * * * *";
+        /* Um 3 und 4 Uhr am Freitag Samstag Sonntag
+         cronjobContentlist = "0 3,4 * * 5,6,7";
+         zu den jeweiligen Minuten um 3,4 Uhr am Montag , Dienstag, Mittwoch, Donnerstag, Freitag
+        cronjobContentdata = "0,6,12,18,24,30,36,42,48,54 3,4 * * 1,2,3,4";*/
         contentupdater = new StreamingcontentUpdater(streamingcontentscraper);
         dataupdater = new ContentdataUpdater(contentdatascraper);
     }
@@ -54,7 +58,16 @@ public sealed class Timeworker : BackgroundService
            // int test = await WaitForNextSchedule(cronjob1, cronjob2);
            // _logger.LogInformation($"task {test} done at {DateTime.Now}");
            //await contentupdater.updateStreamingContent();
-           await dataupdater.updatePartOfContentData();
+           int completedTask = await WaitForNextSchedule(cronjob1, cronjob2);
+           if (completedTask == 1)
+           {
+               await contentupdater.updateStreamingContent();
+           }
+           else if (completedTask == 2)
+           {
+                await dataupdater.updatePartOfContentData();     
+           }
+          
         }
 
 
@@ -79,7 +92,6 @@ public sealed class Timeworker : BackgroundService
         if (delay1 < delay2)
         {
             await Task.Delay(delay1);
-            await contentupdater.updateStreamingContent();
             return 1;
         }
         else

@@ -12,10 +12,19 @@ public class StreamingcontentUpdater
         _streamingcontentscraper = streamingcontentscraper;
     }
 
-    public async Task updateStreamingContent()
+    public async Task<bool> updateStreamingContent()
     {
-        List<Tuple<string,string>> actualcontent = await _streamingcontentscraper.GetContentAsync();
-        ContentlistRepository contentlistrep = new ContentlistRepository();
-        await contentlistrep.UpdateContent(actualcontent);
+        try
+        {
+            List<Tuple<string, string>> actualcontent = await _streamingcontentscraper.GetContentAsync();
+            ContentlistRepository contentlistrep = new ContentlistRepository();
+            await contentlistrep.UpdateContent(actualcontent);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return false;
+        }
     }
 }
