@@ -27,8 +27,10 @@ public sealed class Timeworker : BackgroundService
     public Timeworker(ILogger<Timeworker> logger, IStreamingcontentScraper<Tuple<string, string>> streamingcontentscraper, IContentdataScraper<Tuple<string, string>> contentdatascraper)
     {
         _logger = logger;
-        cronjob2 = "30 * * * *";
-        cronjob1 = "5,35,58 * * * *";
+        //Holt sich die Contentdaten
+        cronjob2 = "50,56 * * * *";
+        //Holt sich die Contentliste
+        cronjob1 = "3 * * * *";
         /* Um 3 und 4 Uhr am Freitag Samstag Sonntag
          cronjobContentlist = "0 3,4 * * 5,6,7";
          zu den jeweiligen Minuten um 3,4 Uhr am Montag , Dienstag, Mittwoch, Donnerstag, Freitag
@@ -39,12 +41,6 @@ public sealed class Timeworker : BackgroundService
     
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("1. StartAsync has been called.");
-        //Installs Chromium for Webscrapping
-        using (var browserFetcher = new BrowserFetcher()){
-            await browserFetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
-        }
-        _logger.LogInformation("1.a) Chrome Instance is checked");
         base.StartAsync(cancellationToken);
     }
 

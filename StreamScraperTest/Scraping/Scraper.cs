@@ -14,9 +14,18 @@ public abstract class Scraper
     
     protected async Task GetBrowser()
     {
-        LaunchOptions opt = new LaunchOptions();
-        opt.Headless = Headless;
-        Browser = await Puppeteer.LaunchAsync(opt);
+        Browser = await Puppeteer.LaunchAsync(new LaunchOptions()
+        {
+            Headless = true,
+            ExecutablePath = "/usr/bin/google-chrome-stable",
+            Args = new[]
+            {
+                "--disable-gpu",
+                "--disable-dev-shm-usage",
+                "--disable-setuid-sandbox",
+                "--no-sandbox"
+            }
+        });
     }
 
     protected async Task GoToUrl(string url, bool newPage)

@@ -5,7 +5,7 @@ namespace StreamScraperTest.Database;
 
 public class StreamScraperContext: DbContext
 {
-    private const string ConnectionString = "Server=localhost;User=alex;Password=dbtest;Database=StreamScraper";
+    private const string ConnectionString = "Server=localhost;Port=3306;User=alex;Password=dbtest;Database=StreamScraper";
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
