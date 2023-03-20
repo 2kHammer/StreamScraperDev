@@ -1,38 +1,25 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PuppeteerSharp;
+using Microsoft.Extensions.Logging;
 using StreamScraperTest;
-using StreamScraperTest.Buffer;
-using StreamScraperTest.Database.IRepositories;
-using StreamScraperTest.Database.Models;
-using StreamScraperTest.Database.Repositories;
 using StreamScraperTest.Database.Updater;
 using StreamScraperTest.Models.ScrapingModels;
 using StreamScraperTest.Scraping;
 using StreamScraperTest.Scraping.Contentdatascraper;
 
-
-
-
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddHostedService<Timeworker>();
-        services.AddScoped<IContentdataScraper<Tuple<string, string>>, MoviepilotScraper>();
-        services.AddScoped<IStreamingcontentScraper<Tuple<string, string>>, WerStreamtEsScraper>();
+        services.AddScoped<IContentdataScraper<SearchCriterias>, MoviepilotScraper>();
+        services.AddScoped<IStreamingcontentScraper<SearchCriterias>, WerStreamtEsScraper>();
+
+        
     })
     .Build();
 
 host.Run();
 
-
-/*WerStreamtEsScraper namescraper = new WerStreamtEsScraper(true);
-List<Tuple<string,string>>test3 = await namescraper.GetContentAsync();
-DataBuffer<List<Tuple<string,string>>>.Bufferdata(test3, "Contentnames.dat");*/
-
-
-//var test3 = DataBuffer<List<Tuple<string, string>>>.Restoredata("Contentnames.dat");
 
 /*
  * Probleme:
@@ -52,22 +39,3 @@ DataBuffer<List<Tuple<string,string>>>.Bufferdata(test3, "Contentnames.dat");*/
  *  - passende Zeitpunkte per Cronjob festlegen
  *  - Containerizen und erster test
  */ 
-
-/*
-
-MoviepilotScraper contentscraper = new MoviepilotScraper(true);
-List<ContentData> data  = await contentscraper.GetFullDataAsync(test3);
-
-DataBuffer<List<ContentData>>.Bufferdata(data, "CompleteData.dat");*/
-
-/*IContentdataScraper<Tuple<string,string>> mpScraper = new MoviepilotScraper(true);
-var data = await mpScraper.GetDataAsync(new Tuple<string, string>("Saw", "2004"));
-
-Console.WriteLine(data.PublicationYear);*/
-
-/* Nochmal anschauen ob die Behandlung passt fals kein Element gefunden wird */
-
-/* Komisches Verhalten bei Headless Browser und Moviepilot: es wird nicht nach cookies gefragt,
-   erstmal geklärt über try/catch, aber er warte ziemlich lange auf cookie selector (evtl timeout
-   ändern)*/
-

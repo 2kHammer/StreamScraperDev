@@ -1,29 +1,34 @@
+using Microsoft.Extensions.Logging;
+using StreamScraperTest.Database.IRepositories;
 using StreamScraperTest.Database.Repositories;
+using StreamScraperTest.Models.ScrapingModels;
 using StreamScraperTest.Scraping;
 
 namespace StreamScraperTest.Database.Updater;
 
 public class StreamingcontentUpdater
 {
-    private IStreamingcontentScraper<Tuple<string, string>> _streamingcontentscraper;
-
-    public StreamingcontentUpdater(IStreamingcontentScraper<Tuple<string, string>> streamingcontentscraper)
+    private IStreamingcontentScraper<SearchCriterias> _streamingcontentscraper;
+    private ILogger<StreamingcontentUpdater> _logger;
+    public StreamingcontentUpdater(IStreamingcontentScraper<SearchCriterias> streamingcontentscraper, ILogger<StreamingcontentUpdater> logger)
     {
         _streamingcontentscraper = streamingcontentscraper;
+        _logger = logger;
     }
 
     public async Task<bool> updateStreamingContent()
     {
         try
         {
-            List<Tuple<string, string>> actualcontent = await _streamingcontentscraper.GetContentAsync();
-            ContentlistRepository contentlistrep = new ContentlistRepository();
+            List<SearchCriterias> actualcontent = await _streamingcontentscraper.GetContentAsync();
+            IContentlistRepository<SearchCriterias> contentlistrep = new ContentlistRepository();
             await contentlistrep.UpdateContent(actualcontent);
+            _logger.LogInformation("Contentlist updated");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            _logger.LogError($"Error updating Contentlist: {ex}");
             return false;
         }
     }

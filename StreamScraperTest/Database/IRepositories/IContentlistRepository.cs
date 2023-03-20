@@ -1,7 +1,7 @@
 namespace StreamScraperTest.Database.IRepositories;
 
-public interface IContentlistRepository
+public interface IContentlistRepository<T>
 {
     //evtl noch async machen
-    public Task UpdateContent(List<Tuple<string, string>> FullActualContent);
+    public Task UpdateContent(List<T> FullActualContent);
 }

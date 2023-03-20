@@ -1,18 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using StreamScraperTest.Database.IRepositories;
 using StreamScraperTest.Database.Models;
+using StreamScraperTest.Models.ScrapingModels;
 
 namespace StreamScraperTest.Database.Repositories;
 
-public class ContentlistRepository : IContentlistRepository
+public class ContentlistRepository : IContentlistRepository<SearchCriterias>
 {
-    
-    
     public ContentlistRepository()
     {
         
     }
-    public async Task UpdateContent(List<Tuple<string, string>> FullActualContent)
+    public async Task UpdateContent(List<SearchCriterias> FullActualContent)
     {
         List<Contents> dbcontent  = null; 
         using (StreamScraperContext ssc = new StreamScraperContext())
@@ -23,7 +22,6 @@ public class ContentlistRepository : IContentlistRepository
         List<Contents> contentNotInDb = CheckIfInTable(FullActualContent, dbcontent);
         await UpdateAvailability(FullActualContent, dbcontent);
         await InsertContents(contentNotInDb);
-
     }
     
     public List<Contents> getFullContent()
@@ -50,25 +48,16 @@ public class ContentlistRepository : IContentlistRepository
         }
     }
 
-    /*public List<Contents> getContentlist(List<int> contentindexes)
-    {
-        using (StreamScraperContext scc = new StreamScraperContext())
-        {
-            return scc.content.Where(con => contentindexes.Contains(con.ContentId)).ToList();
-        }
-    }*/
-
-    private List<Contents> CheckIfInTable(List<Tuple<string, string>> actaulContent, List<Contents> contentdb)
+    private List<Contents> CheckIfInTable(List<SearchCriterias> actaulContent, List<Contents> contentdb)
     {
         List<Contents> newContent = new List<Contents>();
         foreach (var content in actaulContent)
         {
             int year = 0;
-            Int32.TryParse(content.Item2, out year);
-            var contentinDB = contentdb.Where(condb => (condb.Name == content.Item1) && (condb.Year == year));
-            if(contentinDB.Count() == 0) newContent.Add(new Contents(){Name = content.Item1, Year = (year != 0)? year : null });
+            Int32.TryParse(content.PublicationYear, out year);
+            var contentinDB = contentdb.Where(condb => (condb.Name == content.ContentName) && (condb.Year == year));
+            if(contentinDB.Count() == 0) newContent.Add(new Contents(){Name = content.ContentName, Year = (year != 0)? year : null });
         }
-
         return newContent;
     }
 
@@ -87,13 +76,13 @@ public class ContentlistRepository : IContentlistRepository
     /*bei Contents für die es schon Contentinformationen gibt wird update ich die Verfügbarkeit in
     Netflix zu falsch für die, die nicht mehr verfügbar sind 
     für die wo neue Contentinformations hinzugefügt werden ist die verfügbarkeit automatisch true*/
-    private async Task UpdateAvailability(List<Tuple<string,string>> actualcontent, List<Contents> contentdb)
+    private async Task UpdateAvailability(List<SearchCriterias> actualcontent, List<Contents> contentdb)
     {
         //Finden der Titel die nicht mehr bei Netflix verfügbar sind
         List<Contents> notinacutalcontent = new List<Contents>();
         foreach (var content in contentdb)
         {
-            var contentInActualContent = actualcontent.Where(x => x.Item1 == content.Name && x.Item2 == content.Year.ToString());
+            var contentInActualContent = actualcontent.Where(x => x.ContentName== content.Name && x.PublicationYear== content.Year.ToString());
             if (contentInActualContent.Count() == 0)
             {
                 notinacutalcontent.Add(content);

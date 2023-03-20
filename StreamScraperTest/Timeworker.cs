@@ -22,19 +22,20 @@ public sealed class Timeworker : BackgroundService
     private readonly string cronjob2;
     private readonly StreamingcontentUpdater contentupdater;
     private readonly ContentdataUpdater dataupdater;
-    
+   
 
-    public Timeworker(ILogger<Timeworker> logger, IStreamingcontentScraper<Tuple<string, string>> streamingcontentscraper, IContentdataScraper<Tuple<string, string>> contentdatascraper)
+
+    public Timeworker(ILogger<Timeworker> logger, IStreamingcontentScraper<SearchCriterias> streamingcontentscraper, IContentdataScraper<SearchCriterias> contentdatascraper, ILogger<StreamingcontentUpdater> loggercontent, ILogger<ContentdataUpdater> loggerdata)
     {
         _logger = logger;
-        cronjob2 = "30 * * * *";
-        cronjob1 = "5,35,58 * * * *";
+        cronjob2 = "45 * * * *";
+        cronjob1 = "11,35,58 * * * *";
         /* Um 3 und 4 Uhr am Freitag Samstag Sonntag
          cronjobContentlist = "0 3,4 * * 5,6,7";
          zu den jeweiligen Minuten um 3,4 Uhr am Montag , Dienstag, Mittwoch, Donnerstag, Freitag
         cronjobContentdata = "0,6,12,18,24,30,36,42,48,54 3,4 * * 1,2,3,4";*/
-        contentupdater = new StreamingcontentUpdater(streamingcontentscraper);
-        dataupdater = new ContentdataUpdater(contentdatascraper);
+        contentupdater = new StreamingcontentUpdater(streamingcontentscraper, loggercontent);
+        dataupdater = new ContentdataUpdater(contentdatascraper, loggerdata);
     }
     
     public override async Task StartAsync(CancellationToken cancellationToken)

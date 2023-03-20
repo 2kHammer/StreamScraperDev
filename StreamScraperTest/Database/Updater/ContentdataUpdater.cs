@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using StreamScraperTest.Database.Models;
 using StreamScraperTest.Database.Repositories;
 using StreamScraperTest.Models.ScrapingModels;
@@ -8,7 +9,8 @@ namespace StreamScraperTest.Database.Updater;
 public class ContentdataUpdater
 {
    //immer zuerst alles updaten wo noch keine Contentinformation vorhanden sind 
-   private IContentdataScraper<Tuple<string, string>> _contentdatascraper;
+   private IContentdataScraper<SearchCriterias> _contentdatascraper;
+   private ILogger<ContentdataUpdater> _logger;
 
    private int ScrapedNewAtOnce = 3;
    private int ScrapedNotFoundAtOnce = 1;
@@ -26,9 +28,10 @@ public class ContentdataUpdater
        { StateOfContentinformations.Contained, 2 }
    };
 
-   public ContentdataUpdater(IContentdataScraper<Tuple<string, string>> contentdatascraper)
+   public ContentdataUpdater(IContentdataScraper<SearchCriterias> contentdatascraper, ILogger<ContentdataUpdater>logger)
    {
        _contentdatascraper = contentdatascraper;
+       _logger = logger;
    }
 
    //Funktion von des Contentdata Repository kann man auf Insert oder Updata aufteilen
@@ -48,10 +51,10 @@ public class ContentdataUpdater
        List<Contents> contentsLongestAgoScraped = GetRightContent(StateOfContentinformations.Contained);
        contentToBeUpdatedOrInserted.AddRange(contentsLongestAgoScraped);
 
-       List<Tuple<string, string>> criteriasDataWithoutInformation = ContentToCriteria(withoutInformation);
-       List<Tuple<string, string>> criteriasDataInformationNotFound = ContentToCriteria(contentNotFound);
-       List<Tuple<string, string>> criteriasDataScrapedLongestAgo = ContentToCriteria(contentsLongestAgoScraped);
-       List<Tuple<string, string>> criteriasToBeUpdatedOrInserted = new List<Tuple<string, string>>();
+       List<SearchCriterias> criteriasDataWithoutInformation = ContentsToCriterias(withoutInformation);
+       List<SearchCriterias> criteriasDataInformationNotFound = ContentsToCriterias(contentNotFound);
+       List<SearchCriterias> criteriasDataScrapedLongestAgo = ContentsToCriterias(contentsLongestAgoScraped);
+       List<SearchCriterias> criteriasToBeUpdatedOrInserted = new List<SearchCriterias>();
        criteriasToBeUpdatedOrInserted.AddRange(criteriasDataWithoutInformation);
        criteriasToBeUpdatedOrInserted.AddRange(criteriasDataInformationNotFound);
        criteriasToBeUpdatedOrInserted.AddRange(criteriasDataScrapedLongestAgo);
@@ -61,33 +64,25 @@ public class ContentdataUpdater
            List<ContentData> scrapedData = await _contentdatascraper.GetFullDataAsync(criteriasToBeUpdatedOrInserted);
            for (int i = 0; i < criteriasToBeUpdatedOrInserted.Count; i++)
            {
-               Console.WriteLine($"Scraped Data: {scrapedData[i].Contentname} und Contents: {contentToBeUpdatedOrInserted[i].Name}");
+               //Console.WriteLine($"Scraped Data: {scrapedData[i].Contentname} und Contents: {contentToBeUpdatedOrInserted[i].Name}");
                await datarep.InsertOrUpdate(scrapedData[i], contentToBeUpdatedOrInserted[i].ContentId);
            }
-
+            _logger.LogInformation("Contentinformation successfully updated");
            return true;
        }
-      /*try
-      {
-          //Test warum Manta Manta nochmal eingefügt wird
-          ContentdataRepository datarep = new ContentdataRepository();
-          var test = await _contentdatascraper.GetDataAsync(new Tuple<string, string>("Manta Manta", "1991"));
-          await datarep.InsertOrUpdate(test, 22);
-          return true;
-      }*/
        catch (Exception ex)
        {
-           Console.WriteLine(ex);
+           _logger.LogError($"Error updating Contentinformation: {ex}");
            return false;
        }
    }
 
-   private List<Tuple<string, string>> ContentToCriteria(List<Contents> listContent)
+   private List<SearchCriterias> ContentsToCriterias(List<Contents> listContent)
    {
-       List<Tuple<string, string>> listCriteria = new List<Tuple<string, string>>();
+       List<SearchCriterias> listCriteria = new List<SearchCriterias>();
        foreach (Contents c in listContent)
        {
-           listCriteria.Add(new Tuple<string, string>(c.Name, c.Year.ToString()));
+           listCriteria.Add(new SearchCriterias(c.Name, c.Year.ToString()));
        }
 
        return listCriteria;
