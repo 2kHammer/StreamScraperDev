@@ -59,7 +59,11 @@ public class MoviepilotScraper : Scraper, IContentdataScraper<SearchCriterias>
         {
             _logger.LogError(ex.ToString());
             await Browser.CloseAsync();
+            return completeData;
+            /*
+             Statt die Exception weiterzuwerfen, gebe ich die bereits gescrapten Daten zurück
             throw ex;
+            */
         }
     }
 

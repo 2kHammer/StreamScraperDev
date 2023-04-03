@@ -6,11 +6,11 @@ using StreamScraperTest.Scraping;
 
 namespace StreamScraperTest.Database.Updater;
 
-public class StreamingcontentUpdater
+public class ContentlistUpdater
 {
-    private IStreamingcontentScraper<SearchCriterias> _streamingcontentscraper;
-    private ILogger<StreamingcontentUpdater> _logger;
-    public StreamingcontentUpdater(IStreamingcontentScraper<SearchCriterias> streamingcontentscraper, ILogger<StreamingcontentUpdater> logger)
+    private IContentlistScraper<SearchCriterias> _streamingcontentscraper;
+    private ILogger<ContentlistUpdater> _logger;
+    public ContentlistUpdater(IContentlistScraper<SearchCriterias> streamingcontentscraper, ILogger<ContentlistUpdater> logger)
     {
         _streamingcontentscraper = streamingcontentscraper;
         _logger = logger;
@@ -20,9 +20,9 @@ public class StreamingcontentUpdater
     {
         try
         {
-            List<SearchCriterias> actualcontent = await _streamingcontentscraper.GetContentAsync();
+            List<SearchCriterias> actualcriterias = await _streamingcontentscraper.GetContentAsync();
             IContentlistRepository<SearchCriterias> contentlistrep = new ContentlistRepository();
-            await contentlistrep.UpdateContent(actualcontent);
+            await contentlistrep.UpdateContent(actualcriterias);
             _logger.LogInformation("Contentlist updated");
             return true;
         }

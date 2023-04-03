@@ -12,12 +12,9 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         services.AddHostedService<Timeworker>();
         services.AddScoped<IContentdataScraper<SearchCriterias>, MoviepilotScraper>();
-        services.AddScoped<IStreamingcontentScraper<SearchCriterias>, WerStreamtEsScraper>();
-
-        
+        services.AddScoped<IContentlistScraper<SearchCriterias>, WerStreamtEsScraper>();
     })
     .Build();
-
 host.Run();
 
 

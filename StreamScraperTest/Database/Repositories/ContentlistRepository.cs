@@ -32,14 +32,6 @@ public class ContentlistRepository : IContentlistRepository<SearchCriterias>
         }
     }
 
-    public async Task<Contents> getContent(int id)
-    {
-        using (StreamScraperContext scc = new StreamScraperContext())
-        {
-            return await scc.content.FindAsync(id);
-        }
-    }
-
     public List<Contents> GetContentWithoutContentinformation()
     {
         using (StreamScraperContext ssc = new StreamScraperContext())
@@ -61,35 +53,35 @@ public class ContentlistRepository : IContentlistRepository<SearchCriterias>
         return newContent;
     }
 
-    private async Task<List<Contents>> InsertContents(List<Contents> insertContent)
+    private async Task<List<Contents>> InsertContents(List<Contents> contenttoinsertindb)
     {
         using (StreamScraperContext ssc = new StreamScraperContext())
         {
-            ssc.AttachRange(insertContent);
-            await ssc.content.AddRangeAsync(insertContent);
+            ssc.AttachRange(contenttoinsertindb);
+            await ssc.content.AddRangeAsync(contenttoinsertindb);
             await ssc.SaveChangesAsync();
         }
 
-        return insertContent;
+        return contenttoinsertindb;
     }
 
     /*bei Contents für die es schon Contentinformationen gibt wird update ich die Verfügbarkeit in
     Netflix zu falsch für die, die nicht mehr verfügbar sind 
     für die wo neue Contentinformations hinzugefügt werden ist die verfügbarkeit automatisch true*/
-    private async Task UpdateAvailability(List<SearchCriterias> actualcontent, List<Contents> contentdb)
+    private async Task UpdateAvailability(List<SearchCriterias> actualcriterias, List<Contents> contentsindb)
     {
         //Finden der Titel die nicht mehr bei Netflix verfügbar sind
-        List<Contents> notinacutalcontent = new List<Contents>();
-        foreach (var content in contentdb)
+        List<Contents> notacutalcontent = new List<Contents>();
+        foreach (var content in contentsindb)
         {
-            var contentInActualContent = actualcontent.Where(x => x.ContentName== content.Name && x.PublicationYear== content.Year.ToString());
+            var contentInActualContent = actualcriterias.Where(x => x.ContentName== content.Name && x.PublicationYear== content.Year.ToString());
             if (contentInActualContent.Count() == 0)
             {
-                notinacutalcontent.Add(content);
+                notacutalcontent.Add(content);
             }
         }
         //Ändern der Verfügbarkeit in der Datenbank
-        foreach (var notonnetflix in notinacutalcontent)
+        foreach (var notonnetflix in notacutalcontent)
         {
             using (StreamScraperContext scc = new StreamScraperContext())
             {

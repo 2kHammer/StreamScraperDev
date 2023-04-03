@@ -8,7 +8,7 @@ using StreamScraperTest.Models.ScrapingModels;
 
 namespace StreamScraperTest.Scraping;
 
-public class WerStreamtEsScraper : Scraper, IStreamingcontentScraper<SearchCriterias>
+public class WerStreamtEsScraper : Scraper, IContentlistScraper<SearchCriterias>
 {
     private ILogger<WerStreamtEsScraper> _logger;
 
@@ -27,7 +27,7 @@ public class WerStreamtEsScraper : Scraper, IStreamingcontentScraper<SearchCrite
         List<SearchCriterias> shownames = new List<SearchCriterias>();
         int oldamount = 0;
 
-        while (/*endofNetflixContent == null*/ oldamount < 300)
+        while (/*endofNetflixContent == null*/ oldamount < 500)
         {
             var pageOfSeries = await Page.GetContentAsync();
             //Information holen mit Angle Sharp
