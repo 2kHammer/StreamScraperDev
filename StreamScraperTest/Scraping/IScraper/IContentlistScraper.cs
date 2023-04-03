@@ -1,6 +1,6 @@
 namespace StreamScraperTest.Scraping;
 
-public interface IStreamingcontentScraper<T>
+public interface IContentlistScraper<T>
 {
     Task<List<T>> GetContentAsync();
 }
