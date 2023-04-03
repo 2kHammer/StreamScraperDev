@@ -18,8 +18,8 @@ public sealed class Timeworker : BackgroundService
     private readonly ILogger<Timeworker> _logger;
     
     //Cronjobs dürfen sich nicht überschneiden, funktioniert sonst nicht
-    private readonly string cronjob1;
-    private readonly string cronjob2;
+    private readonly string cronjobContentlist;
+    private readonly string cronjobContentdata;
     private readonly ContentlistUpdater contentupdater;
     private readonly ContentdataUpdater dataupdater;
    
@@ -28,12 +28,12 @@ public sealed class Timeworker : BackgroundService
     public Timeworker(ILogger<Timeworker> logger, IContentlistScraper<SearchCriterias> streamingcontentscraper, IContentdataScraper<SearchCriterias> contentdatascraper, ILogger<ContentlistUpdater> loggercontent, ILogger<ContentdataUpdater> loggerdata)
     {
         _logger = logger;
-        cronjob1 = "34 * * * *";
-        cronjob2 = "6,8,10,12,14,16 * * * *";
-        /* Um 3 und 4 Uhr am Freitag Samstag Sonntag
+        /*cronjobContentlist = "34 * * * *";
+        cronjobContentdata = "6,8,10,12,14,16 * * * *";*/
+        //Um 3 und 4 Uhr am Freitag Samstag Sonntag
          cronjobContentlist = "0 3,4 * * 5,6,7";
-         zu den jeweiligen Minuten um 3,4 Uhr am Montag , Dienstag, Mittwoch, Donnerstag, Freitag
-        cronjobContentdata = "0,6,12,18,24,30,36,42,48,54 3,4 * * 1,2,3,4";*/
+         //zu den jeweiligen Minuten um 3,4 Uhr am Montag , Dienstag, Mittwoch, Donnerstag, Freitag
+        cronjobContentdata = "0,6,12,18,24,30,36,42,48,54 3,4 * * 1,2,3,4";
         contentupdater = new ContentlistUpdater(streamingcontentscraper, loggercontent);
         dataupdater = new ContentdataUpdater(contentdatascraper, loggerdata);
     }
@@ -59,7 +59,7 @@ public sealed class Timeworker : BackgroundService
            // int test = await WaitForNextSchedule(cronjob1, cronjob2);
            // _logger.LogInformation($"task {test} done at {DateTime.Now}");
            //await contentupdater.updateStreamingContent();
-           int completedTask = await WaitForNextSchedule(cronjob1, cronjob2);
+           int completedTask = await WaitForNextSchedule(cronjobContentlist, cronjobContentdata);
            if (completedTask == 1)
            {
                await contentupdater.updateStreamingContent();
