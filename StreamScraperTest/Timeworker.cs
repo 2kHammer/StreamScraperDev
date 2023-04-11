@@ -89,7 +89,7 @@ public sealed class Timeworker : BackgroundService
 
         TimeSpan delay1 = occurrenceTime1.GetValueOrDefault() - currentUtcTime;
         TimeSpan delay2 = occurrenceTime2.GetValueOrDefault() - currentUtcTime;
-
+        //test
         if (delay1 < delay2)
         {
             await Task.Delay(delay1);
